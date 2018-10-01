@@ -4,16 +4,41 @@ function get(url) {
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
       req.open('GET', url);
-      req.onload = () => req.status === 200 ? resolve(req.status) : reject(Error(req.status));
+      /*  XMLHttpRequest.onload = callback;
+            callback is the function to be executed when the request completes successfully. 
+            It receives a ProgressEvent object as its first argument. 
+            The value of this (i.e. the context) is the same XMLHttpRequest this callback is related to. */
+      req.onload = function(){
+          if (req.status === 200) {
+              resolve(req.status);
+          } else {
+              reject(Error(req.status));
+           }}
+      /* XMLHttpRequest.onerror = callback;
+           callback is the function to be executed if the request results in an error */
       req.onerror = (e) => reject(Error(`Network Error: ${e}`));
       req.send();
     });
   }
 
   get('http://www.example.com')
+  /*p.then(onFulfilled[, onRejected]);
+
+    @param onFulfilled : A Function called if the Promise is fulfilled. This function has one argument, the fulfillment value. 
+    If it is not a function it is internally replaced with an "Identity" function(it returns received argument).
+    
+    @param onRejected (Optional) :
+    A Function called if the Promise is rejected. This function has one argument, the rejection reason. 
+    If it is not a function it is internally replaced with "Thrower" function(it throws an error received as argument). */
   .then((reason) => {
       console.log('got a response ' + reason);
   })
+  /* p.catch(function(reason) { // rejection });
+    @param onRejected: A Function called when the Promise is rejected. This function has one argument:
+        reason : The rejection reason.
+    The Promise returned by catch() is rejected if onRejected throws an error or returns a Promise which is itself rejected; otherwise, it is resolved. */
   .catch((reason) => {
       console.log('did not get any responses. ' + reason)
   });
+
+  
